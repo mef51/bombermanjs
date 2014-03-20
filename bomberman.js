@@ -50,29 +50,47 @@ function Player(ip, port, done) {
     });
 }
 
-// low level
+// Send stuff down da line. low level
 Player.prototype.send = function(s){
-    this.socket.write(s);
+    if(this.socket){
+        this.socket.write(s);
+    }
 };
 
-Player.prototype.goUp = function(){
-    this.send(Actions.up);
+Player.prototype.goUp    = function(){ this.send(Actions.up);    };
+Player.prototype.goDown  = function(){ this.send(Actions.down);  };
+Player.prototype.goLeft  = function(){ this.send(Actions.left);  };
+Player.prototype.goRight = function(){ this.send(Actions.right); };
+Player.prototype.plant   = function(){ this.send(Actions.bomb);  };
+
+// Get data by field. low level
+Player.prototype.getData = function(field) {
+    if(this.data){
+        return this.data[field];
+    }
+    else {
+        return undefined;
+    }
 };
 
-Player.prototype.goDown = function(){
-    this.send(Actions.down);
+Player.prototype.getPos = function() {
+    return {x: this.getData('X'), y: this.getData('Y')};
 };
 
-Player.prototype.goLeft = function(){
-    this.send(Actions.left);
+Player.prototype.getBoard = function() {
+    return this.getData('Board');
 };
 
-Player.prototype.goRight = function(){
-    this.send(Actions.right);
+Player.prototype.isAlive = function() {
+    return this.getData('Alive');
 };
 
-Player.prototype.plant = function(){
-    this.send(Actions.bomb);
+Player.prototype.bombs = function() {
+    return {
+        numBombs : this.getData('Bombs'),
+        radius   : this.getData('Radius'),
+        maxBombs : this.getData('MaxBomb')
+    };
 };
 
 var ip = '0.0.0.0';
