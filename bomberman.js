@@ -1,4 +1,3 @@
-#!/usr/local/bin/node
 
 var net = require('net');
 
@@ -30,17 +29,17 @@ function Player(ip, port, done) {
             try {
                 self.data = JSON.parse(bufferString);
                 self.updateString = nextBufferString;
-                console.log("[log] got a new update");
+                // console.log("[log] got a new update");
             }
             catch(e) {
-                console.error("[error] got a bad JSON string"); // but it's probably fine
+                // console.error("[error] got a bad JSON string"); // but it's probably fine
                 self.updateString = "";
             }
         }
     });
 
     this.socket.on('close', function() {
-        console.log('Connection closed');
+        console.log('Connection closed.');
         this.destroy();
     });
 
@@ -57,11 +56,11 @@ Player.prototype.send = function(s){
     }
 };
 
-Player.prototype.goUp    = function(){ this.send(Actions.up);    };
-Player.prototype.goDown  = function(){ this.send(Actions.down);  };
-Player.prototype.goLeft  = function(){ this.send(Actions.left);  };
-Player.prototype.goRight = function(){ this.send(Actions.right); };
-Player.prototype.plant   = function(){ this.send(Actions.bomb);  };
+Player.prototype.goUp    = function(obj){ obj.send(Actions.up);    };
+Player.prototype.goDown  = function(obj){ obj.send(Actions.down);  };
+Player.prototype.goLeft  = function(obj){ obj.send(Actions.left);  };
+Player.prototype.goRight = function(obj){ obj.send(Actions.right); };
+Player.prototype.plant   = function(obj){ obj.send(Actions.bomb);  };
 
 // Get data by field. low level
 Player.prototype.getData = function(field) {
@@ -93,15 +92,11 @@ Player.prototype.bombs = function() {
     };
 };
 
-var ip = '0.0.0.0';
-var port = 40000;
-var player = new Player(ip, port, function(){
-    setInterval(function(){
-        roll = Math.random();
-        if(roll < 1/4) player.goUp();
-        if(roll < 2/4) player.goDown();
-        if(roll < 3/4) player.goLeft();
-        if(roll < 4/4) player.goRight();
-    }, 500);
-});
+Player.prototype.quit = function() {
+    console.log("Quitting.");
+    this.socket.destroy();
+    process.exit();
+}
 
+exports.Player = Player;
+exports.Actions = Actions;
