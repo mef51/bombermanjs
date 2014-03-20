@@ -10,20 +10,27 @@ Actions = {
     bomb: "bomb\n"
 };
 
+function Player(ip, port) {
+    this.socket = new net.Socket();
+
+    this.socket.connect(port, ip, function() {
+        console.log('Connected');
+        this.write(Actions.bomb);
+    });
+
+    this.socket.on('data', function(data) {
+        console.log(data);
+    });
+
+    this.socket.on('close', function() {
+        console.log('Connection closed');
+    });
+
+    this.socket.on('error', function(e) {
+        console.error(e);
+    });
+}
+
 var ip = '0.0.0.0';
 var port = 40000;
-var numUpdates = 0;
-
-var client = new net.Socket();
-client.connect(port, ip, function() {
-    console.log('Connected');
-    client.write(Actions.bomb);
-});
-
-client.on('data', function(data) {
-
-});
-
-client.on('close', function() {
-    console.log('Connection closed');
-});
+var player = new Player(ip, port);
