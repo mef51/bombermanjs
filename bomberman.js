@@ -14,6 +14,7 @@ function Player(ip, port, done) {
     self = this;
     this.socket = new net.Socket();
     this.updateString = "";
+    this.data = {};
 
     this.socket.connect(port, ip, function() {
         console.log("Connected.");
@@ -22,7 +23,20 @@ function Player(ip, port, done) {
 
     this.socket.on('data', function(data) {
         self.updateString += data;
-        console.log('' + data);
+        if(data.toString().indexOf('\n\n') > -1){
+            bufferArray = self.updateString.split('\n\n');
+            bufferString = bufferArray[0];
+            nextBufferString = bufferArray[1];
+            try {
+                self.data = JSON.parse(bufferString);
+                self.updateString = nextBufferString;
+                console.log("[log] got a new update");
+            }
+            catch(e) {
+                console.error("[error] got a bad JSON string"); // but it's probably fine
+                self.updateString = "";
+            }
+        }
     });
 
     this.socket.on('close', function() {
