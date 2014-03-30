@@ -72,6 +72,11 @@ Player.prototype.getData = function(field) {
     }
 };
 
+// returns the turn duration in milliseconds.
+Player.prototype.getTurnDuration = function(){
+    return this.getData('TurnDuration')/1000000;
+};
+
 Player.prototype.getPos = function() {
     return {x: this.getData('X'), y: this.getData('Y')};
 };

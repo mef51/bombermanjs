@@ -11,7 +11,7 @@ var player = new bomberman.Player(ip, port, function(){
     console.log("playing...");
 
     // every 500ms pick a move
-    setInterval(function(){
+    move = function() {
         if(player.isAlive()) {
             play();
         }
@@ -19,7 +19,10 @@ var player = new bomberman.Player(ip, port, function(){
             console.log("Game over!");
             player.quit();
         }
-    }, 500);
+        setTimeout(move, player.getTurnDuration());
+    };
+
+    setTimeout(move, 250);
 });
 
 // pick a move randomly
